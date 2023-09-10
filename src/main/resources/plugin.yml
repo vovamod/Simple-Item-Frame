@@ -1,0 +1,8 @@
+name: SimpleItemFrame
+version: '${project.version}'
+main: org.vega.sub.SimpleItemFrame
+api-version: '1.20'
+prefix: SIF
+load: STARTUP
+authors: [vovamod (Idea: AmazingAnimal)]
+description: Just a simple Item Frame plugin to make it invisible
