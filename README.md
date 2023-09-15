@@ -12,3 +12,4 @@ https://github.com/vovamod/Simple-Item-Frame/assets/61664874/be4ae565-93d1-4542-
   
 # TO-DO:
 - add effect (optionally)
+- rewrite current implemantation and fix bugs with config reload
