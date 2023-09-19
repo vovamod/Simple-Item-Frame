@@ -1,19 +1,10 @@
-# SIF ver 1.1
+# SIF ver 1.2
 # Simple Item Frame plugin developed as a result of learning by vovamod. Make you gameplay more immersive with Simple Item Frames.
-version: 1.1
+version: 1.2
 prefix: "&7[&fSIF&7]"
 
 # Specify a block/tool which will be used to check the interaction. Default: "shears". You can set anything else here if you don't like using shears.
 item: "shears"
-
-# In Progress
-effect: none
-
-# This adds a permission check for each player so that if player has permission he can use this plugin if set to false it will not check permission so player would be able to use it while ignoring permission. (simpleitemframe.visibility)
-permission_visibility: false
-
-# This is permission for reloading/managing plugin, if true only the player with specific permission would be able to reload plugin. (simpleitemframe.reload)
-permission_manager: true
 
 #Messages
 m_permission: "Not enough rights to use this"

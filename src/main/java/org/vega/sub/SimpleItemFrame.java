@@ -1,66 +1,91 @@
 package org.vega.sub;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.Listener;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.vega.sub.Util.Commands;
 import org.vega.sub.Util.Logic;
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
-
 public final class SimpleItemFrame extends JavaPlugin implements Listener {
-    public static Permission VISIBILITY_PERMISSION;
-    public static Permission OP_PERMISSION;
+    // Commands + Logic vars
     private Commands commands;
+    // Variables from config which will be used later (VOVA IMPLEMENT THE GODDAMN CHECK CLASS SYSTEM)
+    public static String itemTypeName;
     public static String prefix;
+    public static String version;
     public static String m_permission;
     public static String m_error;
     public static String m_reload;
-
+    public static Material itemMaterial;
+    //Local vars within classes
+    public static SimpleItemFrame INSTANCE;
     @Override
     public void onEnable() {
+        INSTANCE = this;
+        // Easy config reload + check
         saveDefaultConfig();
-        FileConfiguration config = getConfig();
-
-        prefix = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(getConfig().getString("prefix")));
-        m_permission = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(getConfig().getString("m_permission")));
-        m_error = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(getConfig().getString("m_error")));
-        m_reload = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(getConfig().getString("m_reload")));
-
-        try {
-            OP_PERMISSION = new Permission("simpleitemframe.reload");
-            VISIBILITY_PERMISSION = new Permission("simpleitemframe.visibility");
-            OP_PERMISSION.setDefault(PermissionDefault.valueOf(Objects.requireNonNull(config.getString("permission_manager")).toUpperCase()));
-            VISIBILITY_PERMISSION.setDefault(PermissionDefault.valueOf(Objects.requireNonNull(config.getString("permission_visibility")).toUpperCase()));
-        } catch (Exception e) {
-            getLogger().severe(m_error.replace("(e)", (CharSequence) e));
-            getServer().getPluginManager().disablePlugin(this);
-        }
-        if (VISIBILITY_PERMISSION == null) {
-            Bukkit.getLogger().warning("Invalid Permission specified for visibility. Setting automatically to false");
-            VISIBILITY_PERMISSION.setDefault(PermissionDefault.FALSE);
-        }
-        if (OP_PERMISSION ==null){
-            Bukkit.getLogger().warning("Invalid Permission specified for managing SIF. Setting automatically to true");
-            VISIBILITY_PERMISSION.setDefault(PermissionDefault.TRUE);
-        }
-        getServer().getPluginManager().registerEvents(this, this);
-        Logic logic = new Logic(this);
-        commands = new Commands(this);
+        loadConfig();
+        getServer().getPluginManager().registerEvents(INSTANCE, INSTANCE);
+        // Other and Main logic
+        commands = new Commands();
+        Logic logic = new Logic();
         logic.registerEvents();
-        Objects.requireNonNull(getCommand("sif")).setTabCompleter(commands);
     }
-
-    @Override
-    public void onDisable() {
-    }
+    // Pass command handle event to Commands logic Class
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         return commands.onCommand(sender, command, label, args);
+    }
+    // Fast and easy logic to reload config in any case
+    public void loadConfig() {
+        //Making config var for easy use
+        FileConfiguration config = getConfig();
+        //Strings load
+        try {
+            // Strings load
+            version = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("version")));
+            prefix = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("prefix")));
+            m_permission = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("m_permission")));
+            m_error = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("m_error")));
+            m_reload = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("m_reload")));
+            itemTypeName = Objects.requireNonNull(config.getString("item")).toUpperCase();
+        } catch (Exception e) {
+            // IF SMT BROKEN REPORT HERE
+            getLogger().severe("SIF will be restored to default settings, config damaged\nReport of stacktrace:\n" + e);
+            errorConfig();
+        }
+        itemMaterial = Material.getMaterial(itemTypeName);
+        if (Material.getMaterial(itemTypeName) == null) {
+            Bukkit.getLogger().warning("Invalid item type specified in the configuration: " + itemTypeName + ". Setting SHEARS as a default item");
+            itemMaterial = Material.SHEARS;
+        } else {
+            itemMaterial = Material.getMaterial(itemTypeName);
+        }
+    }
+    public void errorConfig(){
+        FileConfiguration config = getConfig();
+        File configFile = new File(getDataFolder(), "config.yml");
+        String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        File brokenConfigFile = new File(getDataFolder(), timestamp + "-broken-config.yml");
+        configFile.renameTo(brokenConfigFile);
+        // Load default config
+        saveDefaultConfig();
+        reloadConfig();
+        loadConfig();
+        version = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("version")));
+        prefix = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("prefix")));
+        m_permission = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("m_permission")));
+        m_error = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("m_error")));
+        m_reload = ChatColor.translateAlternateColorCodes('&', Objects.requireNonNull(config.getString("m_reload")));
+        itemTypeName = Objects.requireNonNull(config.getString("item")).toUpperCase();
+        itemMaterial = Material.getMaterial(itemTypeName);
     }
 }
