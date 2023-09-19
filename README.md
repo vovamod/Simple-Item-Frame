@@ -7,9 +7,5 @@ https://github.com/vovamod/Simple-Item-Frame/assets/61664874/be4ae565-93d1-4542-
 # Additionally:
 - Contains config
 - Item to change visibility can be changed in config
-- Default Bukkit permission system (simpleitemframe.reload, simpleitemframe.visibility)
-- Custom messages for prefix/errors/reloads/premission
-  
-# TO-DO:
-- add effect (optionally)
-- rewrite current implemantation and fix bugs with config reload
+- Default Bukkit permission system (sif.manage, sif.visibility)
+- Custom messages for prefix/errors/reloads
