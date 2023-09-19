@@ -1,12 +1,22 @@
 name: SimpleItemFrame
 version: '${project.version}'
 main: org.vega.sub.SimpleItemFrame
-api-version: '1.20'
+api-version: '1.19'
 prefix: SIF
 load: STARTUP
 authors: [vovamod (Idea: AmazingAnimal)]
+description: Just a simple Item Frame plugin to make it invisible
 commands:
   sif:
+    description: SIF version
+    usage: Используя /sif - Вы получите номер версии плагина
+  sifreload:
     description: Manage SIF
-    usage: Используйте /sif help для помощи
-description: Just a simple Item Frame plugin to make it invisible
+    usage: Используя /sifreload - Вы сможете перезагрузить плагин
+permissions:
+  sif.manage:
+    default: false
+    description: This is permission for reloading/managing plugin, if true only the player with specific permission would be able to reload plugin. (sif.manage)
+  sif.visibility:
+    default: true
+    description: This adds a permission check for each player so that if player has permission he can use this plugin if set to false it will not check permission so player would be able to use it while ignoring permission. (simpleitemframe.visibility)
